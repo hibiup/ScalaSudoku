@@ -124,19 +124,6 @@ object SudokuResolver {
             println("------------------------------------------------------")
         }
     }
-
-    def printHistory(hitOptions: Array[Array[ArrayBuffer[Int]]]) {
-        // Loop the number from 1 to 9 in the cube
-        for (number <- 1 to SudokuResolver.group_size) {
-            // Check cube[0 to 8]
-            for (cubeIndex <- 0 until SudokuResolver.group_size) {
-                hitOptions(number - 1)(cubeIndex) match {
-                    case null => println(number, cubeIndex, hitOptions(number - 1)(cubeIndex).toList);
-                    case _ => println(number, cubeIndex, null);
-                }
-            }
-        }
-    }
 }
 
 case class SudokuResolver(var matrix: Array[Int]) {
