@@ -83,7 +83,7 @@ object SudokuResolver {
       */
     def applyMask(matrix: Array[Int], mask: Cube, n: Int): Cube = {
         var i = 0;
-        mask.list.foreach { x =>
+        mask.member.foreach { x =>
             if (0 == x) {
                 val p = SudokuResolver.localToGlobe(mask.index, i);
                 matrix(p) = n;
@@ -167,10 +167,12 @@ case class SudokuResolver(var matrix: Array[Int]) {
             val cube = SudokuResolver.getCube(matrix.toList, cubeIndex);
             val cubeMask = updateMask(cube, number);
 
+            // Store current matrix image
             cubeShadow(cube.index) = cube;
+            // Store options for all the numbers
             saveOption(cubeMask, number);
 
-            if (1 == SudokuResolver.count(cubeMask.list, 0)) {
+            if (1 == SudokuResolver.count(cubeMask.member, 0)) {
                 val newCube = SudokuResolver.applyMask(matrix, cubeMask, number);
                 hitOptions(number - 1)(cubeMask.index) = null;
                 modified = true;
@@ -188,7 +190,7 @@ case class SudokuResolver(var matrix: Array[Int]) {
         index = index + 1;
 
         while (0 != newMatrix.length) {
-            // If new Sudoku is able to generated, start recursion.
+            // If new Sudoku is able to be generated, start recursion.
             val sudoku = SudokuResolver(newMatrix);
             val result = sudoku.play();
             result match {
@@ -223,6 +225,7 @@ case class SudokuResolver(var matrix: Array[Int]) {
             // Check cube[0 to 8]
             for (ci <- 0 until SudokuResolver.group_size) {
                 val offsets: ArrayBuffer[Int] = hitOptions(n - 1)(ci);
+                // Find a number with minimal possibility
                 if (null != offsets && offsets.size >= 1 && (minimal > offsets.size)) {
                     minimal = offsets.size;
                     number = n;
@@ -252,15 +255,15 @@ case class SudokuResolver(var matrix: Array[Int]) {
     def saveOption(cubeMask: Cube, number: Int) = {
         def optionList(list: List[Int]): ArrayBuffer[Int] = {
             val options = ArrayBuffer[Int]();
-            var from = cubeMask.list.indexWhere({ p => p == 0 });
+            var from = cubeMask.member.indexWhere({ p => p == 0 });
             while (-1 != from) {
                 options += from;
-                from = cubeMask.list.indexWhere({ p => p == 0 }, from + 1);
+                from = cubeMask.member.indexWhere({ p => p == 0 }, from + 1);
             }
 
             options;
         }
-        hitOptions(number - 1)(cubeMask.index) = optionList(cubeMask.list);
+        hitOptions(number - 1)(cubeMask.index) = optionList(cubeMask.member);
     }
 
     /**
@@ -270,7 +273,7 @@ case class SudokuResolver(var matrix: Array[Int]) {
       * n: the number is interested
       */
     def updateMask(cube: Cube, n: Int): Cube = {
-        val cubeMask: Array[Int] = makeMask(cube.list, n);
+        val cubeMask: Array[Int] = makeMask(cube.member, n);
         if (cubeMask.contains(0)) {
             // If this cube has place(s) available for this number.
             // Check horizontal
@@ -289,7 +292,7 @@ case class SudokuResolver(var matrix: Array[Int]) {
     def checkHorizontal(cube: Cube, cubeMask: Array[Int], n: Int) = {
         getRowIndexesFromCubeIndex(cube.index).foreach { x => {
             val line: Line = SudokuResolver.getLine(matrix.toList, x, SudokuResolver.group_size);
-            Utils.toSdkGroup(line.list) match {
+            Utils.toSdkGroup(line.member) match {
                 case SdkGroup(p0, p1, p2, p3, p4, p5, p6, p7, p8) if (p0 == n || p1 == n || p2 == n || p3 == n || p4 == n || p5 == n || p6 == n || p7 == n || p8 == n) =>
                     cubeMask(x % SudokuResolver.unit_size * SudokuResolver.unit_size) = 1;
                     cubeMask(x % SudokuResolver.unit_size * SudokuResolver.unit_size + 1) = 1;
@@ -307,7 +310,7 @@ case class SudokuResolver(var matrix: Array[Int]) {
     def checkVertical(cube: Cube, cubeMask: Array[Int], n: Int) = {
         getColumnIndexesFromCubeIndex(cube.index).foreach { x => {
             val line: Column = SudokuResolver.getColumn(matrix.toList, x, SudokuResolver.group_size);
-            Utils.toSdkGroup(line.list) match {
+            Utils.toSdkGroup(line.member) match {
                 case SdkGroup(p0, p1, p2, p3, p4, p5, p6, p7, p8) if (p0 == n || p1 == n || p2 == n || p3 == n || p4 == n || p5 == n || p6 == n || p7 == n || p8 == n) =>
                     cubeMask(x % SudokuResolver.unit_size) = 1;
                     cubeMask(x % SudokuResolver.unit_size + 3) = 1;

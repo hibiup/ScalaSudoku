@@ -1,15 +1,14 @@
 package com.wang.hibiup.sudoku
 
-object Direction extends Enumeration {
-    val HORIZONTAL = Value;
-    val VERTICAL = Value;
-    val CUBE = Value;
-}
+sealed trait Formation
+case object HORIZONTAL extends Formation
+case object VERTICAL extends Formation
+case object SQUARE extends Formation
 
-abstract class Group(t: Direction.Value, index: Int, list: List[Int]);
-case class Cube(index: Int, list: List[Int]) extends Group(Direction.CUBE, index, list);
-case class Line(index: Int, list: List[Int]) extends Group(Direction.HORIZONTAL, index, list);
-case class Column(index: Int, list: List[Int]) extends Group(Direction.VERTICAL, index, list);
+abstract class Group(t: Formation, index: Int, list: List[Int]);
+case class Cube(index: Int, member: List[Int]) extends Group(SQUARE, index, member);
+case class Line(index: Int, member: List[Int]) extends Group(HORIZONTAL, index, member);
+case class Column(index: Int, member: List[Int]) extends Group(VERTICAL, index, member);
 case class Option(number: Int, options: List[Int])
 case class SdkGroup(p0: Int, p1: Int, p2: Int, p3: Int, p4: Int, p5: Int, p6: Int, p7: Int, p8: Int)
 
