@@ -6,7 +6,7 @@ import org.junit._, runner.RunWith, Assert._
 @RunWith(classOf[JUnitRunner])
 class SudokuResolverTestCase extends FunSuite {
     test("playEasy") {
-        SudokuResolver.play(Array(
+        val matrix = Array[Int](
             0, 5, 0, 2, 0, 0, 0, 1, 4,
             0, 1, 8, 0, 6, 3, 0, 9, 0,
             0, 2, 0, 0, 0, 4, 8, 5, 0,
@@ -15,11 +15,16 @@ class SudokuResolverTestCase extends FunSuite {
             8, 0, 0, 0, 7, 0, 4, 2, 9,
             0, 8, 5, 1, 0, 0, 0, 3, 0,
             0, 4, 0, 9, 3, 0, 7, 8, 0,
-            3, 9, 0, 0, 0, 2, 0, 4, 0));
+            3, 9, 0, 0, 0, 2, 0, 4, 0);
+
+        SudokuResolver.printSudoku(matrix.toList);
+        val sudoku = SudokuResolver(matrix);
+        sudoku.play;
+        SudokuResolver.printSudoku(sudoku.matrix.toList);
     }
 
     test("playEvil1") {
-        SudokuResolver.play(Array(
+        val matrix = Array[Int](
             1, 0, 0, 0, 0, 5, 0, 0, 0,
             0, 0, 0, 8, 0, 0, 1, 0, 0,
             0, 9, 7, 0, 3, 4, 0, 0, 0,
@@ -28,11 +33,16 @@ class SudokuResolverTestCase extends FunSuite {
             7, 8, 0, 0, 0, 0, 4, 0, 0,
             0, 0, 0, 2, 4, 0, 8, 6, 0,
             0, 0, 6, 0, 0, 1, 0, 0, 0,
-            0, 0, 0, 9, 0, 0, 0, 0, 4));
+            0, 0, 0, 9, 0, 0, 0, 0, 4);
+
+        SudokuResolver.printSudoku(matrix.toList);
+        val sudoku = SudokuResolver(matrix);
+        sudoku.play;
+        SudokuResolver.printSudoku(sudoku.matrix.toList);
     }
 
     test("playEvil2") {
-        SudokuResolver.play(Array(
+        val matrix = Array[Int](
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -41,7 +51,12 @@ class SudokuResolverTestCase extends FunSuite {
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0));
+            0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        SudokuResolver.printSudoku(matrix.toList);
+        val sudoku = SudokuResolver(matrix);
+        sudoku.play;
+        SudokuResolver.printSudoku(sudoku.matrix.toList);
     }
 
     test("getGroup") {
@@ -103,7 +118,7 @@ class SudokuResolverTestCase extends FunSuite {
 
         val cube = SudokuResolver.getCube(matrix.toList, 0);
         println(cube)
-        val mask = sudoku.fillNumber(cube, 4);
+        val mask = sudoku.updateMask(cube, 4);
         println(mask)
         SudokuResolver.applyMask(matrix, mask, 4);
         SudokuResolver.printSudoku(matrix.toList);
